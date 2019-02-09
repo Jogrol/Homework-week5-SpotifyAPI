@@ -36,7 +36,6 @@ router.get('/playlists', auth, (req, res) => {
     
   })
 
-
   router.get('/playlists/:id/', auth, (req, res) => {
     Song
     .findAll({ where: {playlistId : req.params.id}})
@@ -51,7 +50,23 @@ router.get('/playlists', auth, (req, res) => {
     .catch(error => next(error))
   })
 
-
-
+  router.delete('/playlists/:id', auth, (req,res, next) => {
+    console.log(`where is the userId?${res}`)  
+    console.log(Song)
+    Playlist
+        .findById(req.params.id)
+        .then(playlist => {
+            if (!playlist) {
+              return res.status(404).send({
+                message: `Playlist does not exist`
+              })
+            }
+            return (Song.destroy({ where: {playlistId : req.params.id}}) && playlist.destroy())
+              .then(() => res.send({
+                message: `playlist was deleted`
+              }))
+          })
+          .catch(error => next(error))
+  })
 
   module.exports = router
