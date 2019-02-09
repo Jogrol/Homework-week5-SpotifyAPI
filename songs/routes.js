@@ -13,12 +13,10 @@ router.post('/playlists/:id/songs', (req, res, next) => {
             album: req.body.album,
             playlistId: req.params.id
         }
-    console.log(song.title)
     Song
         .create(song)
         .then(song => {return res.status(201).send(song)})
         .catch(error => next(error))
-
     })     
   
 module.exports = router;

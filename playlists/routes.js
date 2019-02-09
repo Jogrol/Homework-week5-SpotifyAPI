@@ -1,6 +1,6 @@
 const {Router} = require('express')
 const User = require('../users/model')
-// const Song = require('../songs/model')
+const Song = require('../songs/model')
 const Playlist = require('./model')
 const auth = require('../auth/middleware')
 const router = new Router()
@@ -23,42 +23,35 @@ router.get('/playlists', auth, (req, res) => {
   })
 
   router.post('/playlists', auth, (req, res, next) => {
+      console.log(req.body)
         const playlist = {
         name: req.body.name,
         userId: req.user.id
     }
     Playlist
-      .create({playlist})
+      .create(playlist)
       .then(playlist => {
         return res.status(201).send(playlist)})
       .catch(error => next(error))
     
   })
 
-  router.get('/playlists/:id', auth, (req, res) => {
-      console.log(req.params.id)
-    Playlist
-    .findAll({ 
-        where: {
-            id: req.params.id,
-            userId : req.user.id
-             }
+
+  router.get('/playlists/:id/', auth, (req, res) => {
+    Song
+    .findAll({ where: {playlistId : req.params.id}})
+    .then(playlist => {
+      if (!playlist) {
+        return res.status(404).send({
+          message: `"its a match"`
         })
-    .then(playlist => { console.log(playlist)
-        if (!playlist === []) {
-            return res.send({
-                message: `Playlist does not exist`
-        })
-    }
-    return res.send(playlist)
-    
+      }
+      return res.send(playlist)
     })
     .catch(error => next(error))
-})
+  })
 
 
-// .findById(req.params.id, {
-//     include: [Company]
-//   })
+
 
   module.exports = router
