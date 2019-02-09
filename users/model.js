@@ -1,4 +1,3 @@
-
 const Sequelize = require('sequelize')
 const sequelize = require('../db')
 
@@ -16,7 +15,6 @@ const User = sequelize.define('users', {
     },
     password_confirmation: {
         type: Sequelize.STRING,
-        field: ' password_confirmation',
         allowNull: false
     },
     },

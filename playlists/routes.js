@@ -18,7 +18,7 @@ router.get('/playlists', auth, (req, res) => {
     .catch(error => next(error))
   })
 
-  router.post('/playlists', auth, (req, res, next) => {
+router.post('/playlists', auth, (req, res, next) => {
         const playlist = {
         name: req.body.name,
         userId: req.user.id
@@ -36,7 +36,7 @@ router.get('/playlists', auth, (req, res) => {
     
   })
 
-  router.get('/playlists/:id/', auth, (req, res, next) => {
+router.get('/playlists/:id/', auth, (req, res, next) => {
     Song
     .findAll({ where: {playlistId : req.params.id}})
     .then(playlist => { console.log(playlist)
@@ -50,7 +50,7 @@ router.get('/playlists', auth, (req, res) => {
     .catch(error => next(error))
   })
 
-  router.delete('/playlists/:id', auth, (req,res, next) => {
+router.delete('/playlists/:id', auth, (req,res, next) => {
     
     Playlist
         .findById(req.params.id)

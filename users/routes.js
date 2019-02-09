@@ -18,8 +18,7 @@ router.post('/users', (req, res, next) => {
      } else {
         User
           .create(user)
-          .then(users => {console.log(users.email) 
-              return res.status(201).send({
+          .then(() => {return res.status(201).send({
                 message: `Welcome, You are now signed in!`
               })})
           .catch(error => next(error))
