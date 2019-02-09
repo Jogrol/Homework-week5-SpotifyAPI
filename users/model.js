@@ -1,22 +1,24 @@
 const Sequelize = require('sequelize')
 const sequelize = require('../db')
-const User = require('../users/model')
 
-const Playlist = sequelize.define('playlists', {
-    name: {
+const User = sequelize.define('users', {
+
+    email: {
         type:  Sequelize.STRING,
         allowNull: false
     },
-    userId: {
-        type: Sequelize.INTEGER,
-        field: 'user_id'
+    password: {
+        type: Sequelize.STRING,
+        allowNull: false
     },
-},
+    password_confirmation: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    },
     {
         timestamps: false,
-        tableName: 'playlists'
+        tableName: 'users'
     })
     
-Playlist.belongsTo(User)
-
-module.exports = Playlist;
+module.exports = User;
