@@ -1,15 +1,14 @@
 const {Router} = require('express')
-const { toJWT,toData} = require('../auth/jwt')
+const {toJWT} = require('../auth/jwt')
 const User = require('../users/model')
 const bcrypt = require('bcrypt');
 const router = new Router()
-
+const auth = require('./middleware')
 
 // Log in and compare if data is avalaible.
 router.post('/tokens', (req, res, next) => {
     const email = req.body.email
     const password = req.body.password
-    console.log(email,password)
     if (!email || !password) {
         return res.status(400).send({
             message: 'Please supply a valid email and password'
@@ -53,26 +52,13 @@ router.post('/tokens', (req, res, next) => {
 })
 
 // Old login witout any middleware
-router.get('/secret-endpoint', (req, res) => {
-    const auth = req.headers.authorization && req.headers.authorization.split(' ')
-    if (auth && auth[0] === 'Bearer' && auth[1]) {
-        try {
-            const data = toData(auth[1])
-            res.send({
-                message: 'Thanks for visiting the secret endpoint.',
-                data
-            })
-        } catch (error) {
-            res.status(400).send({
-                message: `Error ${error.name}: ${error.message}`,
-            })
-        }
-    } else {
-        res.status(401).send({
-            message: 'Please supply some valid credentials'
-        })
-    }
-})
-
+router.get('/secret-endpoint', auth, (req, res) => {
+    res.send({
+      message: `Thanks for visiting the secret endpoint ${req.user.email}.`,
+    })
+  })
 
 module.exports = router
+
+//http :4000/secret-endpoint Authorization:"Bearer thisismytoken"
+//http :4000/secret-endpoint Authorization:"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTU0OTcwNTQwMCwiZXhwIjoxNTQ5NzEyNjAwfQ.88LpsL1SjLOdcSGS0mxTLB-FkEGDP2D4jGuFtpwyLi0"
