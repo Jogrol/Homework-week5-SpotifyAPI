@@ -1,12 +1,8 @@
 const {Router} = require('express')
-const User = require('../users/model')
 const Song = require('../songs/model')
 const Playlist = require('./model')
 const auth = require('../auth/middleware')
 const router = new Router()
-
-//http :4000/playlists Authorization:"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTU0OTcxNDMxOSwiZXhwIjoxNTQ5NzIxNTE5fQ.469cJiSndNYPt41A1_9KkiAeHaKm9vLAm3eG7WgQdgM"
-//http post :4000/playlists Authorization:"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTU0OTcxNDMxOSwiZXhwIjoxNTQ5NzIxNTE5fQ.469cJiSndNYPt41A1_9KkiAeHaKm9vLAm3eG7WgQdgM"
 
 router.get('/playlists', auth, (req, res) => {
     Playlist
@@ -14,7 +10,7 @@ router.get('/playlists', auth, (req, res) => {
     .then(playlist => {
       if (!playlist) {
         return res.status(404).send({
-          message: `"its a match"`
+          message: `"Playlist not found"`
         })
       }
       return res.send(playlist)
@@ -30,37 +26,43 @@ router.get('/playlists', auth, (req, res) => {
     Playlist
       .create(playlist)
       .then(playlist => {
+          if(!playlist) {
+              return res.status(404).send({
+                  message: 'Playlist not creaeted'
+              })
+          }
         return res.status(201).send(playlist)})
       .catch(error => next(error))
     
   })
 
-  router.get('/playlists/:id/', auth, (req, res) => {
+  router.get('/playlists/:id/', auth, (req, res, next) => {
     Song
     .findAll({ where: {playlistId : req.params.id}})
-    .then(playlist => {
-      if (!playlist) {
+    .then(playlist => { console.log(playlist)
+      if (playlist.length === 0) {
         return res.status(404).send({
-          message: `"its a match"`
+          message: `"Playlist not found"`
         })
       }
-      return res.send(playlist)
+      return res.status(200).send(playlist)
     })
     .catch(error => next(error))
   })
 
   router.delete('/playlists/:id', auth, (req,res, next) => {
+    
     Playlist
         .findById(req.params.id)
         .then(playlist => {
-            if (!playlist) {
+            if (playlist.userId !== req.user.id) {
               return res.status(404).send({
-                message: `Playlist does not exist`
+                message: `Playlist not found`
               })
             }
             return (Song.destroy({ where: {playlistId : req.params.id}}) && playlist.destroy())
-              .then(() => res.send({
-                message: `playlist was deleted`
+              .then(() => res.status(200).send({
+                message: `Playlist is deleted`
               }))
           })
           .catch(error => next(error))
