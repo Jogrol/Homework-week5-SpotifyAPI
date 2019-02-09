@@ -10,24 +10,20 @@ router.post('/users', (req, res, next) => {
         password: bcrypt.hashSync(req.body.password, 10),
         password_confirmation: bcrypt.hashSync(req.body.password_confirmation, 10)
     }
-  
-    User
-      .create(user)
-      .then(user => { console.log(`compare ${user.password} and ${user.password_confirmation}`)
-        if(user.password_confirmation === user.password){
-          return res.status(201).send({
-            message: "passwwords not matching"
-          })
-        }
-        if (!user) {
-          return res.status(404).send({
-            message: `User does not exist`
-          })
-        }
-        return res.status(201).send(user)
+
+    if (req.body.password !== req.body.password_confirmation) {
+      return res.status(400).send({
+          message: 'password and password confirmation are not the same'
       })
-      .catch(error => next(error))
-     
+     } else {
+        User
+          .create(user)
+          .then(users => {console.log(users.email) 
+              return res.status(201).send({
+                message: `Welcome, You are now signed in!`
+              })})
+          .catch(error => next(error))
+        }
   })
 
 

@@ -23,7 +23,6 @@ router.get('/playlists', auth, (req, res) => {
   })
 
   router.post('/playlists', auth, (req, res, next) => {
-      console.log(req.body)
         const playlist = {
         name: req.body.name,
         userId: req.user.id
@@ -51,8 +50,6 @@ router.get('/playlists', auth, (req, res) => {
   })
 
   router.delete('/playlists/:id', auth, (req,res, next) => {
-    console.log(`where is the userId?${res}`)  
-    console.log(Song)
     Playlist
         .findById(req.params.id)
         .then(playlist => {
