@@ -10,7 +10,6 @@ function auth(req, res, next) {
         .findById(data.userId)
         .then(user => {
           if (!user) return next('User does not exist')
-
           req.user = user
           next()
         })
@@ -24,7 +23,7 @@ function auth(req, res, next) {
   }
   else {
     res.status(401).send({
-      message: 'Please supply some valid credentials'
+      message: 'Please supply valid credentials'
     })
   }
 }
