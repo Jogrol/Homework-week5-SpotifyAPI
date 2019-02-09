@@ -6,7 +6,7 @@ const sequelize = new Sequelize(connectionString, {define: { timestamps: false }
 
 // to update DB {force:true}
 
-sequelize.sync()
+sequelize.sync({force:true})
   .then(() => {
     console.log('Sequelize updated database schema')
   })
