@@ -12,12 +12,27 @@ router.get('/playlists', (req, res, next) => {
         Playlist.count(),
         Playlist.findAll({ limit, offset })
     ])
-    .then(playlists => {
+    .then(playlists => { console.log(playlists)
         res.send({ playlists})
       })
       .catch(error => next(error))
 })
 
+
+router.get('/playlists/:id', (req, res, next) => {
+    console.log(req)
+    Playlist
+    .findByPk(req.params.userId)
+    .then(playlist => {
+      if (!playlist) {
+        return res.status(404).send({
+          message: `Company does not exist`
+        })
+      }
+      return res.send(playlist)
+    })
+    .catch(error => next(error))
+})
 
 router.post('/playlists', (req, res, next) => {
     Playlist
